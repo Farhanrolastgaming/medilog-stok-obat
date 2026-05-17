@@ -8,6 +8,8 @@ use App\Http\Controllers\ObatController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\BarangKeluarController;
 
 // Route untuk fitur Login & Logout
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -26,6 +28,8 @@ Route::middleware('auth.login')->group(function () {
     Route::resource('obat', ObatController::class);
     Route::resource('user', UserController::class);
     Route::resource('transaksi', TransaksiController::class);
+    Route::resource('barang-masuk', BarangMasukController::class)->only(['index', 'create', 'store', 'destroy']);
+    Route::resource('barang-keluar', BarangKeluarController::class)->only(['index', 'create', 'store', 'destroy']);
 
     Route::get('/report/stok', [ReportController::class, 'laporanStok'])->name('report.stok');
     Route::get('/report/barang-masuk', [ReportController::class, 'laporanBarangMasuk'])->name('report.barang-masuk');
