@@ -19,11 +19,12 @@ class Transaksi extends Model
     {
         return $this->belongsTo(User::class);
         }
+
     public function DetailTransaksi()
     {
         return $this->belongsTo(DetailTransaksi::class);
         }
-   
+
 
 
     
