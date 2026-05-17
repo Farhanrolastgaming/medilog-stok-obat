@@ -30,19 +30,15 @@ class ObatController
      */
     public function store(Request $request)
     {
-    $request->validate({
+        $request->validate([
+            'nama_obat'  => 'required|string|max:255',
+            'jenis_obat' => 'required|string|max:255',
+            'satuan'=> 'required|string|max:255'
+        ]);
 
-        'nama_obat'  => 'required|string|max:255',
-        'jenis_obat' => 'required|string|max:255',
-        'satuan'=> 'requaired|string|max:255'
-    
-    
+        Obat::create($request->all());
 
-    }); 
-
-            
-        
-            
+        return redirect()->route('obat.index')->with('success', 'Obat berhasil ditambahkan');
     }
 
     /**

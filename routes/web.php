@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PemasokController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
 // Route untuk fitur Login & Logout
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -16,6 +17,4 @@ Route::get('/', function () {
 });
 
 Route::resource('pemasok', PemasokController::class);
-Route::get('/dashboard', function () {
-    return view('dasboard');
-})->middleware('auth.login');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth.login')->name('dashboard');

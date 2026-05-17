@@ -2,16 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Obat;
+use App\Models\User;
+use App\Models\DetailTransaksi;
 use Illuminate\Http\Request;
 
 class DashboardController
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $totalObat = Obat::count();
+        $totalJenisObat = Obat::distinct('jenis_obat')->count('jenis_obat');
+        $totalPengguna = User::count();
+        $totalObatMasuk = DetailTransaksi::sum('jumlah_masuk') ?? 0;
+
+        $obatNeedAttention = Obat::where('stok', '<', 10)->limit(10)->get();
+
+        return view('dasboard', [
+            'totalObat' => $totalObat,
+            'totalObatMasuk' => $totalObatMasuk,
+            'totalObatKeluar' => 0,
+            'totalJenisObat' => $totalJenisObat,
+            'totalPengguna' => $totalPengguna,
+            'obatNeedAttention' => $obatNeedAttention
+        ]);
     }
 
     /**
