@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use Illuminate\Support\Facades\URL;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -19,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if ($this->app->environment('production') || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) || getenv('RAILWAY_STATIC_URL')) {
+            URL::forceScheme('https');
+        }
     }
 }
