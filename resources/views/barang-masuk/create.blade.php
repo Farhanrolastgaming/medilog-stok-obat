@@ -32,7 +32,7 @@
         <div class="mb-6">
             <h3 class="text-lg font-semibold mb-4">Detail Barang</h3>
             <div id="items-container">
-                <div class="item-row grid grid-cols-5 gap-4 mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <div class="item-row grid grid-cols-7 gap-4 mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Obat</label>
                         <select name="obat_id[]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon focus:border-transparent" required>
@@ -42,6 +42,12 @@
                             @endforeach
                         </select>
                     </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Merek</label>
+                        <input type="text" name="merek[]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon focus:border-transparent" placeholder="Cth: Sanmol">
+                    </div>
+                    
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah</label>
                         <input type="number" name="jumlah[]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon focus:border-transparent" min="1" required>
@@ -51,7 +57,11 @@
                         <input type="number" name="harga_beli[]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon focus:border-transparent" min="0" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Masa Kadaluwarsa</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Harga Jual</label>
+                        <input type="number" name="harga_jual[]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon focus:border-transparent" min="0" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kedaluwarsa</label>
                         <input type="date" name="masa_kadaluwarsa[]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon focus:border-transparent">
                     </div>
                     <div class="flex items-end">
@@ -68,7 +78,7 @@
         </div>
 
         <div class="flex gap-3">
-            <button type="submit" class="bg-brandMaroon text-white px-6 py-2 rounded-lg hover:bg-red-800">
+            <button type="submit" class="bg-brandMaroon text-white px-6 py-2 rounded-lg hover:bg-teal-800 transition">
                 Simpan
             </button>
             <a href="{{ route('barang-masuk.index') }}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400">
@@ -82,6 +92,7 @@
 document.getElementById('add-item').addEventListener('click', function() {
     const container = document.getElementById('items-container');
     const newRow = container.firstElementChild.cloneNode(true);
+    // Ini akan otomatis mengosongkan semua input termasuk Merek saat baris baru ditambah
     newRow.querySelectorAll('input, select').forEach(el => el.value = '');
     container.appendChild(newRow);
     attachRemoveListeners();
@@ -90,7 +101,11 @@ document.getElementById('add-item').addEventListener('click', function() {
 function attachRemoveListeners() {
     document.querySelectorAll('.remove-item').forEach(btn => {
         btn.addEventListener('click', function() {
-            this.closest('.item-row').remove();
+            if(document.querySelectorAll('.item-row').length > 1) {
+                this.closest('.item-row').remove();
+            } else {
+                alert('Minimal harus ada 1 barang!');
+            }
         });
     });
 }

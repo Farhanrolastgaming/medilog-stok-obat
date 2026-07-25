@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Obat;
+use App\Models\StokBatch;
 use Illuminate\Http\Request;
 
-class ObatController
+class ObatController extends Controller
 {
     public function index()
     {
@@ -20,22 +21,37 @@ class ObatController
 
     public function store(Request $request)
     {
+        // 1. Validasi data master obat
         $request->validate([
-            'nama_obat'  => 'required|string|max:255',
-            'jenis_obat' => 'required|string|max:255',
-            'satuan'=> 'required|string|max:255',
-            'harga_jual' => 'required|integer|min:0',
-            'stok' => 'nullable|integer|min:0'
+            'kode_obat'     => 'required|string|max:50|unique:obats,kode_obat',
+            'nama_obat'     => 'required|string|max:255',
+            'jenis_obat'    => 'required|string|max:100',
+            'golongan_obat' => 'nullable|string|max:100',
+            'komposisi'     => 'nullable|string',
+            'aturan_pakai'  => 'nullable|string',
+            'satuan'        => 'required|string|max:50',
         ]);
 
-        Obat::create($request->all());
+        // 2. Simpan data dengan menyuntikkan nilai 0 untuk stok dan harga awal
+        Obat::create([
+            'kode_obat'     => $request->kode_obat,
+            'nama_obat'     => $request->nama_obat,
+            'jenis_obat'    => $request->jenis_obat,
+            'golongan_obat' => $request->golongan_obat,
+            'komposisi'     => $request->komposisi,
+            'aturan_pakai'  => $request->aturan_pakai,
+            'satuan'        => $request->satuan,
+            'stok'          => 0, // Otomatis 0, nanti bertambah lewat Barang Masuk
+            'harga_jual'    => 0, // Otomatis 0, nanti diatur per batch / saat transaksi
+            'harga_beli'    => 0, // Otomatis 0, nanti diatur per batch / saat transaksi
+        ]);
 
-        return redirect()->route('obat.index')->with('success', 'Obat berhasil ditambahkan');
+        return redirect()->route('obat.index')->with('success', 'Data master obat baru berhasil ditambahkan.');
     }
 
     public function show(string $id)
     {
-        $obat = Obat::findOrFail($id);
+        $obat = Obat::with('stokBatches.pemasok')->findOrFail($id);
         return view('obat.show', compact('obat'));
     }
 
@@ -48,15 +64,19 @@ class ObatController
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'nama_obat'  => 'required|string|max:255',
-            'jenis_obat' => 'required|string|max:255',
-            'satuan'=> 'required|string|max:255',
-            'harga_jual' => 'required|integer|min:0',
-            'stok' => 'nullable|integer|min:0'
+            'kode_obat'     => 'required|string|max:50|unique:obats,kode_obat,' . $id,
+            'nama_obat'     => 'required|string|max:255',
+            'jenis_obat'    => 'required|string|max:100',
+            'golongan_obat' => 'nullable|string|max:100',
+            'komposisi'     => 'nullable|string',
+            'aturan_pakai'  => 'nullable|string',
+            'satuan'        => 'required|string|max:50',
         ]);
 
         $obat = Obat::findOrFail($id);
-        $obat->update($request->all());
+        $obat->update($request->only([
+            'kode_obat', 'nama_obat', 'jenis_obat', 'golongan_obat', 'komposisi', 'aturan_pakai', 'satuan'
+        ]));
 
         return redirect()->route('obat.index')->with('success', 'Obat berhasil diperbarui');
     }
@@ -67,5 +87,22 @@ class ObatController
         $obat->delete();
 
         return redirect()->route('obat.index')->with('success', 'Obat berhasil dihapus');
+    }
+
+    public function destroyBatch(string $batchId)
+    {
+        $batch = StokBatch::findOrFail($batchId);
+        $obatId = $batch->obat_id;
+
+        $batch->delete();
+
+        // Hitung ulang total stok obat berdasarkan sisa batch
+        $obat = Obat::find($obatId);
+        if ($obat) {
+            $obat->stok = $obat->stokBatches()->sum('stok');
+            $obat->save();
+        }
+
+        return redirect()->route('obat.show', $obatId)->with('success', 'Riwayat batch stok berhasil dihapus');
     }
 }

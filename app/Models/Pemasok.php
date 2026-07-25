@@ -9,7 +9,16 @@ class Pemasok extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_pemasok','info_kontak'];
+    protected $fillable = [
+        'nama_pemasok',
+        'nama_pic',
+        'telepon',
+        'email',
+        'alamat',
+        'kota',
+        'no_rekening',
+        'info_kontak',
+    ];
 
     public function transaksis()
     {

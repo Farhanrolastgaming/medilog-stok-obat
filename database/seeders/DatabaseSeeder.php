@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         'name' => 'Muhammad Farhan',
         'email' => 'admin@medilog.com',
         'password' => bcrypt('password123'), // bcrypt digunakan untuk mengenkripsi password
-        'role' => 'admin',
+        'role' => 'owner',
     ]);
     }
 

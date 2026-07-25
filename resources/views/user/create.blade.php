@@ -32,14 +32,14 @@
             <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Role</label>
             <select id="role" name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon focus:border-transparent @error('role') border-red-500 @enderror" required>
                 <option value="">-- Pilih Role --</option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
+                <option value="owner">Owner</option>
+                <option value="apoteker">Apoteker</option>
             </select>
             @error('role') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
 
         <div class="flex gap-3">
-            <button type="submit" class="bg-brandMaroon text-white px-6 py-2 rounded-lg hover:bg-red-800">
+            <button type="submit" class="bg-brandMaroon text-white px-6 py-2 rounded-lg hover:bg-teal-800 transition">
                 Simpan
             </button>
             <a href="{{ route('user.index') }}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400">

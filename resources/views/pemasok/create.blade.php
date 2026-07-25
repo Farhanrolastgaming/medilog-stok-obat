@@ -6,86 +6,152 @@
     <h1 class="text-2xl font-semibold">Tambah Pemasok Baru</h1>
 </div>
 
-<div class="grid grid-cols-3 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Left Sidebar Info -->
-    <div class="col-span-1">
+    <div class="lg:col-span-1">
         <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-100 sticky top-8">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-12 h-12 rounded-lg bg-brandGreen flex items-center justify-center text-white">
                     <i class="fas fa-info-circle text-lg"></i>
                 </div>
-                <h3 class="font-semibold text-gray-800">Informasi</h3>
+                <h3 class="font-semibold text-gray-800">Petunjuk Pengisian</h3>
             </div>
             <p class="text-sm text-gray-600 mb-4">
-                Isi formulir di samping untuk menambahkan data pemasok baru ke dalam sistem MEDILOG.
+                Lengkapi informasi distributor/PBF obat untuk memudahkan pemesanan stok dan transaksi keuangan.
             </p>
             <div class="space-y-3 text-sm text-gray-600">
                 <div class="flex gap-2">
                     <i class="fas fa-check text-brandGreen mt-0.5"></i>
-                    <span>Pastikan nama pemasok sudah benar</span>
+                    <span><strong>Nama Pemasok:</strong> Nama resmi PT/CV Distributor.</span>
                 </div>
                 <div class="flex gap-2">
                     <i class="fas fa-check text-brandGreen mt-0.5"></i>
-                    <span>Tambahkan informasi kontak lengkap</span>
+                    <span><strong>Nama Sales/PIC:</strong> Nama kontak personal marketing.</span>
                 </div>
                 <div class="flex gap-2">
                     <i class="fas fa-check text-brandGreen mt-0.5"></i>
-                    <span>Semua field wajib diisi</span>
+                    <span><strong>No. Telepon:</strong> Digunakan untuk fitur kirim WA cepat.</span>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Form Section -->
-    <div class="col-span-2">
+    <div class="lg:col-span-2">
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
             <form action="{{ route('pemasok.store') }}" method="POST" class="space-y-6">
                 @csrf
 
                 <!-- Nama Pemasok -->
-                <div class="form-group">
+                <div>
                     <label for="nama_pemasok" class="block text-sm font-semibold text-gray-800 mb-2">
-                        Nama Pemasok
-                        <span class="text-red-500 ml-1">*</span>
+                        Nama Pemasok / Distributor <span class="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
                         name="nama_pemasok"
                         id="nama_pemasok"
-                        placeholder="Contoh: PT Farmasi Indonesia"
-                        class="w-full px-4 py-3 border @error('nama_pemasok') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen focus:border-transparent transition text-sm"
+                        placeholder="Contoh: PT Kalbe Farma Tbk"
+                        class="w-full px-4 py-2.5 border @error('nama_pemasok') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen transition text-sm"
                         value="{{ old('nama_pemasok') }}"
                         required
                     />
                     @error('nama_pemasok')
-                        <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                            <i class="fas fa-exclamation-circle"></i>
-                            {{ $message }}
-                        </p>
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Info Kontak -->
-                <div class="form-group">
-                    <label for="info_kontak" class="block text-sm font-semibold text-gray-800 mb-2">
-                        Informasi Kontak
-                        <span class="text-red-500 ml-1">*</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Nama Sales/PIC -->
+                    <div>
+                        <label for="nama_pic" class="block text-sm font-semibold text-gray-800 mb-2">
+                            Nama Sales / PIC
+                        </label>
+                        <input
+                            type="text"
+                            name="nama_pic"
+                            id="nama_pic"
+                            placeholder="Contoh: Bpk. Budi"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen transition text-sm"
+                            value="{{ old('nama_pic') }}"
+                        />
+                    </div>
+
+                    <!-- No. Telepon/WA -->
+                    <div>
+                        <label for="telepon" class="block text-sm font-semibold text-gray-800 mb-2">
+                            No. Telepon / WhatsApp
+                        </label>
+                        <input
+                            type="text"
+                            name="telepon"
+                            id="telepon"
+                            placeholder="Contoh: 081234567890"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen transition text-sm"
+                            value="{{ old('telepon') }}"
+                        />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Email Pemasok -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-800 mb-2">
+                            Email Pemasok
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            placeholder="Contoh: sales@kalbe.co.id"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen transition text-sm"
+                            value="{{ old('email') }}"
+                        />
+                    </div>
+
+                    <!-- Kota -->
+                    <div>
+                        <label for="kota" class="block text-sm font-semibold text-gray-800 mb-2">
+                            Kota Asal
+                        </label>
+                        <input
+                            type="text"
+                            name="kota"
+                            id="kota"
+                            placeholder="Contoh: Jakarta Selatan"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen transition text-sm"
+                            value="{{ old('kota') }}"
+                        />
+                    </div>
+                </div>
+
+                <!-- Alamat Lengkap -->
+                <div>
+                    <label for="alamat" class="block text-sm font-semibold text-gray-800 mb-2">
+                        Alamat Lengkap Kantor/Gudang
                     </label>
                     <textarea
-                        name="info_kontak"
-                        id="info_kontak"
-                        rows="4"
-                        placeholder="Contoh: No. Telp: 021-1234567&#10;Email: info@farmasi.com&#10;Alamat: Jl. Merdeka No. 123"
-                        class="w-full px-4 py-3 border @error('info_kontak') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen focus:border-transparent transition text-sm resize-none"
-                        value="{{ old('info_kontak') }}"
-                        required
-                    ></textarea>
-                    @error('info_kontak')
-                        <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                            <i class="fas fa-exclamation-circle"></i>
-                            {{ $message }}
-                        </p>
-                    @enderror
+                        name="alamat"
+                        id="alamat"
+                        rows="2"
+                        placeholder="Contoh: Jl. Industri No. 45, Kawasan Industri Pulogadung"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen transition text-sm"
+                    >{{ old('alamat') }}</textarea>
+                </div>
+
+                <!-- No. Rekening Bank -->
+                <div>
+                    <label for="no_rekening" class="block text-sm font-semibold text-gray-800 mb-2">
+                        No. Rekening Bank Pembayaran
+                    </label>
+                    <input
+                        type="text"
+                        name="no_rekening"
+                        id="no_rekening"
+                        placeholder="Contoh: BCA 1234567890 a.n PT Kalbe Farma"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandGreen transition text-sm"
+                        value="{{ old('no_rekening') }}"
+                    />
                 </div>
 
                 <!-- Form Actions -->
@@ -99,7 +165,7 @@
                     </a>
                     <button
                         type="submit"
-                        class="flex-1 px-6 py-3 bg-brandGreen rounded-lg font-medium text-white hover:bg-green-600 transition flex items-center justify-center gap-2 shadow-sm"
+                        class="flex-1 px-6 py-3 bg-brandMaroon rounded-lg font-medium text-white hover:bg-teal-800 transition flex items-center justify-center gap-2 shadow-sm"
                     >
                         <i class="fas fa-save"></i>
                         Simpan Pemasok
@@ -109,16 +175,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form');
-        const submitBtn = form.querySelector('button[type="submit"]');
-
-        form.addEventListener('submit', function(e) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-        });
-    });
-</script>
 @endsection

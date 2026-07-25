@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController
+class UserController extends Controller
 {
     public function index()
     {
@@ -24,7 +24,7 @@ class UserController
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,user'
+            'role' => 'required|in:owner,apoteker,admin,user'
         ]);
 
         User::create([
@@ -48,7 +48,7 @@ class UserController
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required|in:admin,user'
+            'role' => 'required|in:owner,apoteker,admin,user'
         ]);
 
         $user = User::findOrFail($id);

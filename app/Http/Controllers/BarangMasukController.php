@@ -6,21 +6,29 @@ use App\Models\Transaksi;
 use App\Models\Obat;
 use App\Models\Pemasok;
 use App\Models\DetailTransaksi;
+use App\Models\StokBatch; // <-- JANGAN LUPA IMPORT INI
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class BarangMasukController
+class BarangMasukController extends Controller
 {
     public function index()
     {
-        $transaksis = Transaksi::with('Pemasok', 'User', 'DetailTransaksi')
+        // Ubah bagian 'DetailTransaksi' menjadi 'DetailTransaksi.obat'
+        $transaksis = Transaksi::with(['Pemasok', 'User', 'DetailTransaksi.obat'])
             ->whereNotNull('pemasok_id')
             ->get();
+            
         return view('barang-masuk.index', compact('transaksis'));
     }
 
     public function create()
     {
+        // 1. PROTEKSI ADMIN
+        if (auth()->user() && strtolower(auth()->user()->role) !== 'admin') {
+            return redirect()->route('barang-masuk.index')->with('error', 'Akses Ditolak: Hanya Admin yang diperkenankan mencatat Barang Masuk.');
+        }
+
         $obats = Obat::all();
         $pemasoks = Pemasok::all();
         return view('barang-masuk.create', compact('obats', 'pemasoks'));
@@ -28,6 +36,11 @@ class BarangMasukController
 
     public function store(Request $request)
     {
+        // 2. PROTEKSI ADMIN
+        if (auth()->user() && strtolower(auth()->user()->role) !== 'admin') {
+            return redirect()->route('barang-masuk.index')->with('error', 'Akses Ditolak: Hanya Admin yang diperkenankan mencatat Barang Masuk.');
+        }
+
         $request->validate([
             'pemasok_id' => 'required|exists:pemasoks,id',
             'tanggal_transaksi' => 'required|date',
@@ -36,7 +49,12 @@ class BarangMasukController
             'jumlah' => 'required|array',
             'jumlah.*' => 'integer|min:1',
             'harga_beli' => 'required|array',
-            'harga_beli.*' => 'integer|min:0'
+            'harga_beli.*' => 'integer|min:0',
+            'harga_jual' => 'required|array',
+            'harga_jual.*' => 'integer|min:0',
+            'merek' => 'nullable|array', 
+            'masa_kadaluwarsa' => 'nullable|array',
+            'masa_kadaluwarsa.*' => 'nullable|date'
         ]);
 
         $totalHarga = 0;
@@ -52,18 +70,35 @@ class BarangMasukController
         ]);
 
         foreach ($request->obat_id as $key => $obatId) {
+            $expiredDate = $request->masa_kadaluwarsa[$key] ?? null;
+
+            // 1. Catat Detail Transaksi Masuk
             DetailTransaksi::create([
                 'transaksi_id' => $transaksi->id,
                 'obat_id' => $obatId,
+                'merek' => $request->merek[$key] ?? null, // Jika form kosong, masuk ke DB sebagai null
                 'harga_beli' => $request->harga_beli[$key],
                 'jumlah_masuk' => $request->jumlah[$key],
                 'subtotal' => $request->harga_beli[$key] * $request->jumlah[$key],
-                'masa_kadaluwarsa' => $request->masa_kadaluwarsa[$key] ?? null
+                'masa_kadaluwarsa' => $expiredDate
             ]);
 
+            // 2. Update Stok & Harga Jual Master Obat
             $obat = Obat::find($obatId);
             $obat->stok = ($obat->stok ?? 0) + $request->jumlah[$key];
+            $obat->harga_jual = $request->harga_jual[$key];
             $obat->save();
+
+            // 3. Simpan ke Stok Batch beserta Mereknya
+            StokBatch::create([
+                'obat_id' => $obatId,
+                'pemasok_id' => $request->pemasok_id,
+                'merek' => $request->merek[$key] ?? null, // Disimpan ke tabel stok_batches
+                'stok' => $request->jumlah[$key],
+                'expired_date' => $expiredDate,
+                'harga_beli' => $request->harga_beli[$key],
+                'harga_jual' => $request->harga_jual[$key],
+            ]);
         }
 
         return redirect()->route('barang-masuk.index')->with('success', 'Barang masuk berhasil ditambahkan');
@@ -71,15 +106,45 @@ class BarangMasukController
 
     public function destroy($id)
     {
-        $transaksi = Transaksi::findOrFail($id);
+        $transaksi = Transaksi::with('DetailTransaksi')->findOrFail($id);
 
         foreach ($transaksi->DetailTransaksi as $detail) {
+            // 1. Kurangi Total Stok di Obat Master
             $obat = Obat::find($detail->obat_id);
-            $obat->stok = ($obat->stok ?? 0) - $detail->jumlah_masuk;
-            $obat->save();
+            if ($obat) {
+                $obat->stok = max(0, ($obat->stok ?? 0) - $detail->jumlah_masuk);
+                $obat->save();
+            }
+
+            // 2. LOGIKA BARU: Kurangi juga stok di Batch terkait
+            if ($detail->masa_kadaluwarsa) {
+                $batch = StokBatch::where('obat_id', $detail->obat_id)
+                                  ->where('pemasok_id', $transaksi->pemasok_id)
+                                  ->where('expired_date', $detail->masa_kadaluwarsa)
+                                  ->first();
+                
+                if ($batch) {
+                    $batch->stok = max(0, $batch->stok - $detail->jumlah_masuk);
+                    $batch->save();
+                    
+                    // Opsional: Hapus baris batch sepenuhnya jika stoknya jadi 0
+                    if ($batch->stok == 0) {
+                        $batch->delete();
+                    }
+                }
+            }
         }
 
         $transaksi->delete();
         return redirect()->route('barang-masuk.index')->with('success', 'Barang masuk berhasil dihapus');
+    }
+    public function cetak($id)
+    {
+        // Ambil data transaksi beserta detail, user, dan PEMASOK
+        $transaksi = Transaksi::with(['DetailTransaksi.obat', 'User', 'Pemasok'])
+                    ->whereNotNull('pemasok_id') // Memastikan ini adalah Barang Masuk
+                    ->findOrFail($id);
+
+        return view('barang-masuk.cetak', compact('transaksi'));
     }
 }

@@ -9,7 +9,7 @@ use App\Models\DetailTransaksi;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class TransaksiController
+class TransaksiController extends Controller
 {
     public function index()
     {

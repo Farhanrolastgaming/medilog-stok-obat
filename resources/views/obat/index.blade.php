@@ -6,9 +6,11 @@
         <i class="fas fa-pills text-2xl"></i>
         <h1 class="text-2xl font-semibold">Daftar Obat</h1>
     </div>
-    <a href="{{ route('obat.create') }}" class="bg-brandMaroon text-white px-4 py-2 rounded-lg hover:bg-red-800 flex items-center gap-2">
+    @if(auth()->user() && in_array(strtolower(auth()->user()->role), ['admin', 'owner']))
+    <a href="{{ route('obat.create') }}" class="bg-[#F0FDF4] text-[#0d9488] border border-[#0d9488]/30 hover:bg-emerald-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition shadow-sm">
         <i class="fas fa-plus"></i> Tambah Obat
     </a>
+    @endif
 </div>
 
 @if ($message = Session::get('success'))
@@ -18,8 +20,9 @@
 @endif
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-    <div class="px-5 py-4 border-b border-gray-200 bg-gray-50">
-        <span class="text-sm text-gray-700 font-medium">Total Obat: {{ $obats->count() }}</span>
+    <div class="px-5 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+        <span class="text-sm text-gray-700 font-medium">Daftar Master Obat</span>
+        <span class="text-xs text-gray-500 font-medium">Total Obat: {{ $obats->count() }} data</span>
     </div>
 
     <div class="p-5">
@@ -28,38 +31,72 @@
                 <thead class="text-gray-700 bg-gray-50 border-b border-gray-200">
                     <tr>
                         <th class="py-3 px-4 border-r border-gray-200 font-medium">No</th>
+                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Kode</th>
                         <th class="py-3 px-4 border-r border-gray-200 font-medium">Nama Obat</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Jenis</th>
+                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Golongan</th>
                         <th class="py-3 px-4 border-r border-gray-200 font-medium">Satuan</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Harga Jual</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Stok</th>
+                        <th class="py-3 px-4 border-r border-gray-200 font-medium text-center">Stok</th>
                         <th class="py-3 px-4 font-medium text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($obats as $key => $obat)
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="py-4 px-4 border-r border-gray-200">{{ $key + 1 }}</td>
-                        <td class="py-4 px-4 border-r border-gray-200">{{ $obat->nama_obat }}</td>
-                        <td class="py-4 px-4 border-r border-gray-200">{{ $obat->jenis_obat }}</td>
-                        <td class="py-4 px-4 border-r border-gray-200">{{ $obat->satuan }}</td>
-                        <td class="py-4 px-4 border-r border-gray-200">Rp {{ number_format($obat->harga_jual, 0, ',', '.') }}</td>
+                        <td class="py-4 px-4 border-r border-gray-200 text-center">{{ $key + 1 }}</td>
+                        <td class="py-4 px-4 border-r border-gray-200 font-semibold text-gray-800">{{ $obat->kode_obat ?? '-' }}</td>
+                        
+                        <td class="py-4 px-4 border-r border-gray-200 font-medium text-gray-900">
+                            <div>{{ $obat->nama_obat }}</div>
+                            <div class="text-xs text-gray-500 font-normal">{{ $obat->jenis_obat }}</div>
+                        </td>
+
                         <td class="py-4 px-4 border-r border-gray-200">
+                            @php
+                                $gol = $obat->golongan_obat;
+                                $badgeClass = match($gol) {
+                                    'Obat Bebas' => 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                                    'Obat Bebas Terbatas' => 'bg-blue-100 text-blue-800 border-blue-300',
+                                    'Obat Keras' => 'bg-red-100 text-red-800 border-red-300',
+                                    'Herbal / Jamu' => 'bg-green-100 text-green-800 border-green-300',
+                                    'Psikotropika / Narkotika' => 'bg-purple-100 text-purple-800 border-purple-300',
+                                    default => 'bg-gray-100 text-gray-600 border-gray-200'
+                                };
+                            @endphp
+                            @if($gol)
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border {{ $badgeClass }}">
+                                    {{ $gol }}
+                                </span>
+                            @else
+                                <span class="text-gray-400 italic text-xs">-</span>
+                            @endif
+                        </td>
+
+                        <td class="py-4 px-4 border-r border-gray-200">{{ $obat->satuan }}</td>
+                        <td class="py-4 px-4 border-r border-gray-200 text-center">
                             <span class="px-3 py-1 rounded-full text-xs font-medium {{ $obat->stok > 10 ? 'bg-green-100 text-green-800' : ($obat->stok > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
                                 {{ $obat->stok }}
                             </span>
                         </td>
+                        
                         <td class="py-4 px-4 text-center">
-                            <a href="{{ route('obat.edit', $obat->id) }}" class="text-blue-600 hover:text-blue-800 mr-3">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('obat.destroy', $obat->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-800" onclick="return confirm('Yakin ingin menghapus?')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                            <div class="flex justify-center items-center gap-3">
+                                <a href="{{ route('obat.show', $obat->id) }}" class="text-indigo-600 hover:text-indigo-800 transition-colors" title="Detail Obat">
+                                    <i class="fas fa-info-circle text-lg"></i>
+                                </a>
+
+                                @if(auth()->user() && in_array(strtolower(auth()->user()->role), ['admin', 'owner']))
+                                <a href="{{ route('obat.edit', $obat->id) }}" class="text-brandGreen hover:text-green-600 transition" title="Edit">
+                                    <i class="fas fa-edit text-lg"></i>
+                                </a>
+                                <form action="{{ route('obat.destroy', $obat->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-800 transition-colors" onclick="return confirm('Yakin ingin menghapus obat ini?')" title="Hapus Obat">
+                                        <i class="fas fa-trash text-lg"></i>
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty

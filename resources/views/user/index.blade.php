@@ -6,7 +6,7 @@
         <i class="fas fa-user-cog text-2xl"></i>
         <h1 class="text-2xl font-semibold">Manajemen Akun</h1>
     </div>
-    <a href="{{ route('user.create') }}" class="bg-brandMaroon text-white px-4 py-2 rounded-lg hover:bg-red-800 flex items-center gap-2">
+    <a href="{{ route('user.create') }}" class="bg-[#F0FDF4] text-[#0d9488] border border-[#0d9488]/30 hover:bg-emerald-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition shadow-sm">
         <i class="fas fa-plus"></i> Tambah User
     </a>
 </div>
@@ -47,8 +47,14 @@
                         <td class="py-4 px-4 border-r border-gray-200">{{ $user->name }}</td>
                         <td class="py-4 px-4 border-r border-gray-200">{{ $user->email }}</td>
                         <td class="py-4 px-4 border-r border-gray-200">
-                            <span class="px-3 py-1 rounded-full text-xs font-medium {{ $user->role == 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
-                                {{ ucfirst($user->role) }}
+                            @php
+                                $roleLower = strtolower($user->role);
+                                $isOwner = in_array($roleLower, ['admin', 'owner']);
+                                $displayRole = $isOwner ? 'Owner' : 'Apoteker';
+                                $badgeStyle = $isOwner ? 'bg-purple-100 text-purple-800' : 'bg-teal-100 text-teal-800';
+                            @endphp
+                            <span class="px-3 py-1 rounded-full text-xs font-medium {{ $badgeStyle }}">
+                                {{ $displayRole }}
                             </span>
                         </td>
                         <td class="py-4 px-4 text-center">

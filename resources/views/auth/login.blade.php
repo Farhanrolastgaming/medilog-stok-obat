@@ -14,7 +14,7 @@
                 extend: {
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        brandMaroon: '#9b2c2c', /* Merah Gelap MEDILOG */
+                        brandMaroon: '#115E59', /* Deep Teal MEDILOG */
                         brandYellow: '#eab308', /* Kuning untuk logo */
                         inputBg: '#e5e7eb',     /* Abu-abu terang untuk input */
                     }
@@ -37,7 +37,7 @@
                 
                 <div class="text-center mb-12">
                     <div class="flex justify-center items-center mb-2">
-                        <img src="images/logo.png" alt="logo">
+                        <img src="{{ asset('images/logo.png') }}" alt="logo">
                     </div>
                     <h1 class="text-3xl font-bold tracking-wider text-brandMaroon mt-2 ">MEDI<span class="text-brandYellow">LOG</span></h1>
                 </div>
@@ -58,7 +58,7 @@
                     </div>
 
                     <button type="submit" 
-                        class="w-full bg-brandMaroon text-white font-semibold tracking-wide py-3.5 px-4 rounded-lg hover:bg-red-800 transition duration-300 shadow-md">
+                        class="w-full bg-brandMaroon text-white font-semibold tracking-wide py-3.5 px-4 rounded-lg hover:bg-teal-800 transition duration-300 shadow-md">
                         Sign In
                     </button>
                 </form>

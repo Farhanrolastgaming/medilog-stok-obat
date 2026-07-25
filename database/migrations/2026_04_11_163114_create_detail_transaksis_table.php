@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('subtotal');
             $table->date('masa_kadaluwarsa');
             $table->timestamps();
+            $table->string('merek')->nullable();
         });
     }
 

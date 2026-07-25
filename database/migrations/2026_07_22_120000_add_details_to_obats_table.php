@@ -12,12 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('obats', function (Blueprint $table) {
-
-        $table->integer('stok')->after('harga_jual');
-            
+            $table->string('golongan_obat')->nullable()->after('jenis_obat');
+            $table->text('komposisi')->nullable()->after('golongan_obat');
+            $table->text('aturan_pakai')->nullable()->after('komposisi');
         });
-        
-        
     }
 
     /**
@@ -25,10 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-       Schema::table('obats', function (Blueprint $table) {
-           $table->dropColumn('stok');
-
-       });
-
+        Schema::table('obats', function (Blueprint $table) {
+            $table->dropColumn(['golongan_obat', 'komposisi', 'aturan_pakai']);
+        });
     }
 };

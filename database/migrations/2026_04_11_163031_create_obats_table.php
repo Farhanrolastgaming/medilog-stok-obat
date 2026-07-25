@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. BUAT TABEL OBATS TERLEBIH DAHULU
         Schema::create('obats', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_obat');
             $table->string('nama_obat');
             $table->string('jenis_obat');
             $table->string('satuan');
+            $table->integer('harga_beli');
             $table->integer('harga_jual');
+            $table->integer('stok')->default(0); 
             $table->timestamps();
         });
     }

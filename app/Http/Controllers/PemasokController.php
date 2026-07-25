@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pemasok;
-class PemasokController
+
+class PemasokController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,20 +35,24 @@ class PemasokController
     public function store(Request $request)
     {
         $request->validate([
-            // 1. Validasi data yang dikirim dari form
             'nama_pemasok' => 'required|string|max:255',
-            'info_kontak' => 'required|string|max:255',
-
-
+            'nama_pic'     => 'nullable|string|max:255',
+            'telepon'      => 'nullable|string|max:50',
+            'email'        => 'nullable|email|max:255',
+            'alamat'       => 'nullable|string',
+            'kota'         => 'nullable|string|max:100',
+            'no_rekening'  => 'nullable|string|max:255',
+            'info_kontak'   => 'nullable|string|max:255',
         ]);
-        Pemasok::create([
-            'nama_pemasok' => $request->nama_pemasok,
-            'info_kontak' => $request->info_kontak
 
-        ]);
-        // 3. Kembalikan user ke halaman index dengan pesan sukses
+        $data = $request->only(['nama_pemasok', 'nama_pic', 'telepon', 'email', 'alamat', 'kota', 'no_rekening', 'info_kontak']);
+        if (empty($data['info_kontak'])) {
+            $data['info_kontak'] = trim(($data['telepon'] ?? '') . ' ' . ($data['email'] ?? ''));
+        }
+
+        Pemasok::create($data);
+
         return redirect()->route('pemasok.index')->with('success', 'Data pemasok berhasil ditambahkan');
-
     }
 
     /**
@@ -55,7 +60,8 @@ class PemasokController
      */
     public function show(string $id)
     {
-        //
+        $pemasok = Pemasok::with('transaksis.detailTransaksis.obat')->findOrFail($id);
+        return view('pemasok.show', compact('pemasok'));
     }
 
     /**
@@ -74,14 +80,22 @@ class PemasokController
     {
         $request->validate([
             'nama_pemasok' => 'required|string|max:255',
-            'info_kontak' => 'required|string|max:255',
+            'nama_pic'     => 'nullable|string|max:255',
+            'telepon'      => 'nullable|string|max:50',
+            'email'        => 'nullable|email|max:255',
+            'alamat'       => 'nullable|string',
+            'kota'         => 'nullable|string|max:100',
+            'no_rekening'  => 'nullable|string|max:255',
+            'info_kontak'   => 'nullable|string|max:255',
         ]);
 
         $pemasok = Pemasok::findOrFail($id);
-        $pemasok->update([
-            'nama_pemasok' => $request->nama_pemasok,
-            'info_kontak' => $request->info_kontak,
-        ]);
+        $data = $request->only(['nama_pemasok', 'nama_pic', 'telepon', 'email', 'alamat', 'kota', 'no_rekening', 'info_kontak']);
+        if (empty($data['info_kontak'])) {
+            $data['info_kontak'] = trim(($data['telepon'] ?? '') . ' ' . ($data['email'] ?? ''));
+        }
+
+        $pemasok->update($data);
 
         return redirect()->route('pemasok.index')->with('success', 'Data pemasok berhasil diperbarui');
     }
