@@ -42,19 +42,32 @@
                     <h1 class="text-3xl font-bold tracking-wider text-brandMaroon mt-2 ">MEDI<span class="text-brandYellow">LOG</span></h1>
                 </div>
 
-                <form action="#" method="POST">
-                    @csrf <div class="mb-6">
+                @if(session('error'))
+                    <div class="mb-4 p-3.5 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                        <span>{{ session('error') }}</span>
+                    </div>
+                @endif
+
+                <form action="{{ route('login.process') }}" method="POST">
+                    @csrf 
+                    <div class="mb-6">
                         <label for="email" class="block text-sm font-bold text-gray-500 mb-2">Email</label>
-                        <input type="text" id="email" name="email" 
+                        <input type="email" id="email" name="email" value="{{ old('email') }}"
                             class="w-full bg-inputBg border-transparent rounded-lg py-3.5 px-4 text-gray-800 focus:bg-white focus:ring-2 focus:ring-brandMaroon focus:border-transparent transition duration-200" 
-                            required>
+                            required placeholder="Masukkan email anda">
                     </div>
 
                     <div class="mb-8">
                         <label for="password" class="block text-sm font-bold text-gray-500 mb-2">Password</label>
-                        <input type="password" id="password" name="password" 
-                            class="w-full bg-inputBg border-transparent rounded-lg py-3.5 px-4 text-gray-800 focus:bg-white focus:ring-2 focus:ring-brandMaroon focus:border-transparent transition duration-200" 
-                            required autocomplete="off">
+                        <div class="relative">
+                            <input type="password" id="password" name="password" 
+                                class="w-full bg-inputBg border-transparent rounded-lg py-3.5 px-4 pr-12 text-gray-800 focus:bg-white focus:ring-2 focus:ring-brandMaroon focus:border-transparent transition duration-200" 
+                                required autocomplete="off" placeholder="Masukkan password anda">
+                            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-brandMaroon cursor-pointer focus:outline-none transition" title="Tampilkan/Sembunyikan Password">
+                                <i class="fas fa-eye text-lg" id="eyeIcon"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <button type="submit" 
@@ -67,6 +80,31 @@
         </div>
 
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (togglePassword && passwordInput && eyeIcon) {
+                togglePassword.addEventListener('click', function () {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                    
+                    if (isPassword) {
+                        eyeIcon.classList.remove('fa-eye');
+                        eyeIcon.classList.add('fa-eye-slash');
+                        eyeIcon.classList.add('text-brandMaroon');
+                    } else {
+                        eyeIcon.classList.remove('fa-eye-slash');
+                        eyeIcon.classList.remove('text-brandMaroon');
+                        eyeIcon.classList.add('fa-eye');
+                    }
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>
