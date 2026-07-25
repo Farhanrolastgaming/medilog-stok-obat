@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if ($this->app->environment('production') || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) || getenv('RAILWAY_STATIC_URL')) {
+        if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
     }
