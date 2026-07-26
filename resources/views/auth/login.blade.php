@@ -29,7 +29,7 @@
         
         <div class="hidden lg:block lg:w-3/5 bg-cover bg-left"
         style= "border-right: 1px solid #ededed;">
-        <img src="images/login.jpg" alt="login" width="100%">
+        <img src="{{ asset('images/login.jpg') }}" alt="login" width="100%">
         </div>
 
         <div class="w-full lg:w-2/5 flex items-center justify-center bg-[#fafafa] p-8 sm:p-12">
