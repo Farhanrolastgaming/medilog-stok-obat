@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex items-center justify-between gap-3 text-black mb-6 mt-2 relative z-10">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-black mb-6 mt-2 relative z-10">
     <div class="flex items-center gap-3">
         <i class="fas fa-truck-loading text-2xl"></i>
         <h1 class="text-2xl font-semibold">Data Pemasok / Distributor</h1>
     </div>
     
     @if(auth()->user() && in_array(strtolower(auth()->user()->role), ['admin', 'owner']))
-    <a href="{{ route('pemasok.create') }}" class="bg-[#F0FDF4] text-[#0d9488] border border-[#0d9488]/30 hover:bg-emerald-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition duration-200 shadow-sm">
+    <a href="{{ route('pemasok.create') }}" class="bg-[#F0FDF4] text-[#0d9488] border border-[#0d9488]/30 hover:bg-emerald-100 px-4 py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm text-sm sm:text-base w-full sm:w-auto">
         <i class="fas fa-plus"></i> Tambah Pemasok
     </a>
     @endif
@@ -26,7 +26,7 @@
     </div>
 @endif
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 relative z-10">
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden relative z-10">
     <div class="px-5 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
         <div class="flex items-center gap-2 text-gray-700">
             <span class="text-sm font-medium">Daftar PBF / Pemasok Obat</span>
@@ -34,25 +34,25 @@
         <span class="text-xs text-gray-500 font-medium">Total: {{ $pemasoks->count() }} Pemasok</span>
     </div>
 
-    <div class="p-5">
+    <div class="p-3 sm:p-5">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left border-collapse">
+            <table class="w-full text-xs sm:text-sm text-left border-collapse min-w-[640px]">
                 <thead class="text-gray-700 bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium w-12 text-center">No</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Nama Pemasok & Sales (PIC)</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Kontak (Telp / WA / Email)</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Alamat & Kota</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Rekening Bank</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium w-12 text-center">No</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium">Nama Pemasok & Sales (PIC)</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium">Kontak (Telp / WA / Email)</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium">Alamat & Kota</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium">Rekening Bank</th>
                         @if(auth()->user() && in_array(strtolower(auth()->user()->role), ['admin', 'owner']))
-                        <th class="py-3 px-4 font-medium text-center w-28">Aksi</th>
+                        <th class="py-3 px-3 sm:px-4 font-medium text-center w-28">Aksi</th>
                         @endif
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($pemasoks as $key => $pemasok)
                     <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                        <td class="py-4 px-4 border-r border-gray-200 text-center">{{ $key + 1 }}</td>
+                        <td class="py-3 sm:py-4 px-3 sm:px-4 border-r border-gray-200 text-center">{{ $key + 1 }}</td>
                         
                         <!-- Nama & PIC -->
                         <td class="py-4 px-4 border-r border-gray-200">

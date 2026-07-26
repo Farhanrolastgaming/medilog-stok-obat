@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex items-center justify-between gap-3 text-black mb-6 mt-2">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-black mb-6 mt-2">
     <div class="flex items-center gap-3">
         <i class="fas fa-pills text-2xl"></i>
         <h1 class="text-2xl font-semibold">Daftar Obat</h1>
     </div>
     @if(auth()->user() && in_array(strtolower(auth()->user()->role), ['admin', 'owner']))
-    <a href="{{ route('obat.create') }}" class="bg-[#F0FDF4] text-[#0d9488] border border-[#0d9488]/30 hover:bg-emerald-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition shadow-sm">
+    <a href="{{ route('obat.create') }}" class="bg-[#F0FDF4] text-[#0d9488] border border-[#0d9488]/30 hover:bg-emerald-100 px-4 py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm text-sm sm:text-base w-full sm:w-auto">
         <i class="fas fa-plus"></i> Tambah Obat
     </a>
     @endif
 </div>
 
 @if ($message = Session::get('success'))
-    <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+    <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg shadow-sm">
         {{ $message }}
     </div>
 @endif
@@ -52,29 +52,31 @@
         </div>
     </form>
 </div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
     <div class="px-5 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
         <span class="text-sm text-gray-700 font-medium">Daftar Master Obat</span>
         <span class="text-xs text-gray-500 font-medium">Total Obat: {{ $obats->count() }} data</span>
     </div>
 
-    <div class="p-5">
+    <div class="p-3 sm:p-5">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left border-collapse">
+            <table class="w-full text-xs sm:text-sm text-left border-collapse min-w-[640px]">
                 <thead class="text-gray-700 bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">No</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Kode</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Nama Obat</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Golongan</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium">Satuan</th>
-                        <th class="py-3 px-4 border-r border-gray-200 font-medium text-center">Stok</th>
-                        <th class="py-3 px-4 font-medium text-center">Aksi</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium text-center">No</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium">Kode</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium">Nama Obat</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium">Golongan</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium">Satuan</th>
+                        <th class="py-3 px-3 sm:px-4 border-r border-gray-200 font-medium text-center">Stok</th>
+                        <th class="py-3 px-3 sm:px-4 font-medium text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($obats as $key => $obat)
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="py-4 px-4 border-r border-gray-200 text-center">{{ $key + 1 }}</td>
+                        <td class="py-3 sm:py-4 px-3 sm:px-4 border-r border-gray-200 text-center">{{ $key + 1 }}</td>
                         <td class="py-4 px-4 border-r border-gray-200 font-semibold text-gray-800">{{ $obat->kode_obat ?? '-' }}</td>
                         
                         <td class="py-4 px-4 border-r border-gray-200 font-medium text-gray-900">
