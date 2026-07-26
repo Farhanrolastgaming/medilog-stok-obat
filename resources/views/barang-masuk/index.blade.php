@@ -136,7 +136,7 @@
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-2 border-r border-gray-200">{{ $index + 1 }}</td>
                             <td class="py-3 px-4 border-r border-gray-200 text-left">
-                                <span class="font-medium text-gray-900">{{ $detail->obat->nama_obat }}</span><br>
+                                <span class="font-medium text-gray-900">{{ $detail->obat->nama_obat ?? 'Obat Telah Dihapus' }}</span><br>
                                 <span class="text-xs text-gray-500">{{ $detail->merek ?? 'Generik' }}</span>
                             </td>
                             <td class="py-3 px-4 border-r border-gray-200 text-left">{{ $detail->obat->jenis_obat ?? '-' }}</td>

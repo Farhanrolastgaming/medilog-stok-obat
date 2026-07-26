@@ -14,16 +14,32 @@ class Transaksi extends Model
 
     public function Pemasok()
     {
-        return $this->belongsTo(Pemasok::class);
+        return $this->belongsTo(Pemasok::class, 'pemasok_id');
     }
+
+    public function pemasok()
+    {
+        return $this->belongsTo(Pemasok::class, 'pemasok_id');
+    }
+
     public function User()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function DetailTransaksi()
     {
-        return $this->hasMany(DetailTransaksi::class);
+        return $this->hasMany(DetailTransaksi::class, 'transaksi_id');
+    }
+
+    public function detailTransaksis()
+    {
+        return $this->hasMany(DetailTransaksi::class, 'transaksi_id');
     }
 
     protected static function boot()

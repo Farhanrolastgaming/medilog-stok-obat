@@ -106,8 +106,18 @@ class PemasokController extends Controller
     public function destroy(string $id)
     {
         $pemasok = Pemasok::findOrFail($id);
-        $pemasok->delete();
 
-        return redirect()->route('pemasok.index')->with('success', 'Data pemasok berhasil dihapus');
+        // Cek apakah pemasok ini memiliki riwayat transaksi atau pemesanan
+        if ($pemasok->transaksis()->count() > 0) {
+            return redirect()->route('pemasok.index')
+                ->with('error', 'Gagal Hapus: Pemasok "' . $pemasok->nama_pemasok . '" tidak dapat dihapus karena masih memiliki riwayat transaksi barang masuk.');
+        }
+
+        try {
+            $pemasok->delete();
+            return redirect()->route('pemasok.index')->with('success', 'Data pemasok berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->route('pemasok.index')->with('error', 'Gagal Hapus: Pemasok ini masih digunakan oleh data transaksi/pemesanan lain.');
+        }
     }
 }
