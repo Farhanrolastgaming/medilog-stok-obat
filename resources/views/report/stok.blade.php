@@ -16,11 +16,14 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Sampai</label>
             <input type="date" name="tanggal_sampai" value="{{ request('tanggal_sampai') }}" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon">
         </div>
-        <div class="flex gap-2 ml-auto">
-            <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
+        <div class="flex flex-wrap gap-2 ml-auto">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
                 <i class="fas fa-filter"></i> Filter
             </button>
-            <<button type="submit" name="cetak" value="1" formtarget="_blank" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2 transition-colors">
+            <button type="submit" name="export_excel" value="1" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 flex items-center gap-2 transition-colors">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </button>
+            <button type="submit" name="cetak" value="1" formtarget="_blank" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 flex items-center gap-2 transition-colors">
                 <i class="fas fa-print"></i> Cetak Laporan
             </button>
         </div>

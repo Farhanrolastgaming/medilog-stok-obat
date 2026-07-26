@@ -16,6 +16,7 @@ class PemesananStok extends Model
     protected $fillable = [
         'user_id', 
         'pemasok_id', 
+        'obat_id',
         'nama_obat', 
         'merek',      
         'jumlah', 

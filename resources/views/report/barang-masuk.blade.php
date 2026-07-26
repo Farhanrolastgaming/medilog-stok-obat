@@ -7,20 +7,23 @@
 </div>
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 no-print">
-    <form method="GET" action="{{ route('report.barang-masuk') }}" class="grid grid-cols-3 gap-4 mb-4">
+    <form method="GET" action="{{ route('report.barang-masuk') }}" class="flex flex-wrap items-end gap-4">
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Dari</label>
-            <input type="date" name="tanggal_dari" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon" value="{{ request('tanggal_dari') }}">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Dari</label>
+            <input type="date" name="tanggal_dari" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon" value="{{ request('tanggal_dari') }}">
         </div>
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Sampai</label>
-            <input type="date" name="tanggal_sampai" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon" value="{{ request('tanggal_sampai') }}">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Sampai</label>
+            <input type="date" name="tanggal_sampai" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon" value="{{ request('tanggal_sampai') }}">
         </div>
-        <div class="flex items-end gap-2">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors">
+        <div class="flex flex-wrap gap-2 ml-auto">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors font-medium">
                 <i class="fas fa-search"></i> Filter
             </button>
-            <button type="submit" name="cetak" value="1" formtarget="_blank" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2 transition-colors">
+            <button type="submit" name="export_excel" value="1" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 flex items-center gap-2 transition-colors">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </button>
+            <button type="submit" name="cetak" value="1" formtarget="_blank" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 flex items-center gap-2 transition-colors">
                 <i class="fas fa-print"></i> Cetak Laporan
             </button>
         </div>

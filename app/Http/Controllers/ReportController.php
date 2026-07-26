@@ -51,12 +51,47 @@ class ReportController extends Controller
             return view('report.cetak-stok', compact('mutasiStok'));
         }
 
+        if ($request->has('export_excel')) {
+            $filename = "laporan-stok-" . date('Y-m-d') . ".csv";
+            $headers = [
+                "Content-type" => "text/csv; charset=UTF-8",
+                "Content-Disposition" => "attachment; filename=$filename",
+                "Pragma" => "no-cache",
+                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+                "Expires" => "0"
+            ];
+
+            $callback = function() use ($mutasiStok) {
+                $file = fopen('php://output', 'w');
+                // UTF-8 BOM for Excel
+                fputs($file, "\xEF\xBB\xBF");
+                fputcsv($file, ['No', 'Tanggal Transaksi', 'Kode Transaksi', 'Kode Obat', 'Nama Obat', 'Merek', 'Jenis Obat', 'Pemasok', 'Jumlah Mutasi', 'Harga Beli (Rp)', 'Subtotal (Rp)']);
+
+                foreach ($mutasiStok as $index => $item) {
+                    $tanggal = \Carbon\Carbon::parse($item->transaksi->tanggal_transaksi ?? now())->format('d-m-Y');
+                    $kodeTx = $item->transaksi->kode_transaksi ?? '-';
+                    $kodeObat = $item->obat->kode_obat ?? '-';
+                    $namaObat = $item->obat->nama_obat ?? 'Obat Dihapus';
+                    $merek = $item->merek ?? 'Generik';
+                    $jenis = $item->obat->jenis_obat ?? '-';
+                    $pemasok = $item->transaksi->Pemasok->nama_pemasok ?? '-';
+                    $jumlah = $item->jumlah_masuk;
+                    $hargaBeli = $item->harga_beli;
+                    $subtotal = $item->subtotal;
+
+                    fputcsv($file, [$index + 1, $tanggal, $kodeTx, $kodeObat, $namaObat, $merek, $jenis, $pemasok, $jumlah, $hargaBeli, $subtotal]);
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+        }
+
         return view('report.stok', compact('mutasiStok'));
     }
 
     public function laporanBarangMasuk(Request $request)
     {
-        // Tambahkan withTrashed() pada induk Transaksi dan relasi DetailTransaksi
         $query = Transaksi::withTrashed()
             ->with(['Pemasok', 'DetailTransaksi' => function($q) {
                 $q->withTrashed();
@@ -76,12 +111,40 @@ class ReportController extends Controller
             return view('report.cetak-barang-masuk', compact('transaksis'));
         }
 
+        if ($request->has('export_excel')) {
+            $filename = "laporan-barang-masuk-" . date('Y-m-d') . ".csv";
+            $headers = [
+                "Content-type" => "text/csv; charset=UTF-8",
+                "Content-Disposition" => "attachment; filename=$filename",
+                "Pragma" => "no-cache",
+                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+                "Expires" => "0"
+            ];
+
+            $callback = function() use ($transaksis) {
+                $file = fopen('php://output', 'w');
+                fputs($file, "\xEF\xBB\xBF");
+                fputcsv($file, ['No', 'No Transaksi', 'Tanggal Transaksi', 'Nama Pemasok', 'Total Item', 'Total Harga (Rp)']);
+
+                foreach ($transaksis as $index => $t) {
+                    $tanggal = \Carbon\Carbon::parse($t->tanggal_transaksi)->format('d-m-Y');
+                    $pemasok = $t->Pemasok->nama_pemasok ?? '-';
+                    $totalItem = $t->DetailTransaksi->count();
+                    $totalHarga = $t->total_harga;
+
+                    fputcsv($file, [$index + 1, $t->kode_transaksi, $tanggal, $pemasok, $totalItem, $totalHarga]);
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+        }
+
         return view('report.barang-masuk', compact('transaksis'));
     }
 
     public function laporanBarangKeluar(Request $request)
     {
-        // Tambahkan withTrashed() pada induk Transaksi dan relasi DetailTransaksi
         $query = Transaksi::withTrashed()
             ->with(['DetailTransaksi' => function($q) {
                 $q->withTrashed();
@@ -99,6 +162,34 @@ class ReportController extends Controller
 
         if ($request->has('cetak')) {
             return view('report.cetak-barang-keluar', compact('transaksis'));
+        }
+
+        if ($request->has('export_excel')) {
+            $filename = "laporan-barang-keluar-" . date('Y-m-d') . ".csv";
+            $headers = [
+                "Content-type" => "text/csv; charset=UTF-8",
+                "Content-Disposition" => "attachment; filename=$filename",
+                "Pragma" => "no-cache",
+                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+                "Expires" => "0"
+            ];
+
+            $callback = function() use ($transaksis) {
+                $file = fopen('php://output', 'w');
+                fputs($file, "\xEF\xBB\xBF");
+                fputcsv($file, ['No', 'No Transaksi', 'Tanggal Transaksi', 'Total Item', 'Total Harga (Rp)']);
+
+                foreach ($transaksis as $index => $t) {
+                    $tanggal = \Carbon\Carbon::parse($t->tanggal_transaksi)->format('d-m-Y');
+                    $totalItem = $t->DetailTransaksi->count();
+                    $totalHarga = $t->total_harga;
+
+                    fputcsv($file, [$index + 1, $t->kode_transaksi, $tanggal, $totalItem, $totalHarga]);
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
         }
 
         return view('report.barang-keluar', compact('transaksis'));

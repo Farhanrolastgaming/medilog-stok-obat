@@ -8,10 +8,31 @@ use Illuminate\Http\Request;
 
 class ObatController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $obats = Obat::all();
-        return view('obat.index', compact('obats'));
+        $query = Obat::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_obat', 'like', "%{$search}%")
+                  ->orWhere('kode_obat', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('jenis_obat')) {
+            $query->where('jenis_obat', $request->jenis_obat);
+        }
+
+        if ($request->filled('golongan_obat')) {
+            $query->where('golongan_obat', $request->golongan_obat);
+        }
+
+        $obats = $query->get();
+        $jenisList = Obat::whereNotNull('jenis_obat')->distinct()->pluck('jenis_obat');
+        $golonganList = Obat::whereNotNull('golongan_obat')->where('golongan_obat', '!=', '')->distinct()->pluck('golongan_obat');
+
+        return view('obat.index', compact('obats', 'jenisList', 'golonganList'));
     }
 
     public function create()

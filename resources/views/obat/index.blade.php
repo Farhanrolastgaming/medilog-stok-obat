@@ -19,7 +19,39 @@
     </div>
 @endif
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200">
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <form method="GET" action="{{ route('obat.index') }}" class="flex flex-wrap items-center gap-3">
+        <div class="flex-1 min-w-[200px]">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau kode obat..." class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon">
+        </div>
+        <div class="w-full sm:w-auto">
+            <select name="jenis_obat" class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon">
+                <option value="">-- Semua Jenis Obat --</option>
+                @foreach($jenisList as $jenis)
+                <option value="{{ $jenis }}" {{ request('jenis_obat') == $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="w-full sm:w-auto">
+            <select name="golongan_obat" class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon">
+                <option value="">-- Semua Golongan --</option>
+                @foreach($golonganList as $gol)
+                <option value="{{ $gol }}" {{ request('golongan_obat') == $gol ? 'selected' : '' }}>{{ $gol }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="flex items-center gap-2">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <i class="fas fa-search"></i> Cari
+            </button>
+            @if(request('search') || request('jenis_obat') || request('golongan_obat'))
+            <a href="{{ route('obat.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                Reset
+            </a>
+            @endif
+        </div>
+    </form>
+</div>
     <div class="px-5 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
         <span class="text-sm text-gray-700 font-medium">Daftar Master Obat</span>
         <span class="text-xs text-gray-500 font-medium">Total Obat: {{ $obats->count() }} data</span>
