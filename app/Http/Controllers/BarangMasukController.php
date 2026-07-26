@@ -25,8 +25,8 @@ class BarangMasukController extends Controller
     public function create()
     {
         // 1. PROTEKSI ADMIN
-        if (auth()->user() && strtolower(auth()->user()->role) !== 'admin') {
-            return redirect()->route('barang-masuk.index')->with('error', 'Akses Ditolak: Hanya Admin yang diperkenankan mencatat Barang Masuk.');
+        if (auth()->user() && !in_array(strtolower(auth()->user()->role), ['admin', 'owner'])) {
+            return redirect()->route('barang-masuk.index')->with('error', 'Akses Ditolak: Hanya Admin / Owner yang diperkenankan mencatat Barang Masuk.');
         }
 
         $obats = Obat::all();
@@ -37,8 +37,8 @@ class BarangMasukController extends Controller
     public function store(Request $request)
     {
         // 2. PROTEKSI ADMIN
-        if (auth()->user() && strtolower(auth()->user()->role) !== 'admin') {
-            return redirect()->route('barang-masuk.index')->with('error', 'Akses Ditolak: Hanya Admin yang diperkenankan mencatat Barang Masuk.');
+        if (auth()->user() && !in_array(strtolower(auth()->user()->role), ['admin', 'owner'])) {
+            return redirect()->route('barang-masuk.index')->with('error', 'Akses Ditolak: Hanya Admin / Owner yang diperkenankan mencatat Barang Masuk.');
         }
 
         $request->validate([

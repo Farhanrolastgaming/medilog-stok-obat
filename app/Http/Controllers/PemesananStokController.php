@@ -10,8 +10,8 @@ class PemesananStokController extends Controller
 {
     public function index()
     {
-        if (auth()->user() && strtolower(auth()->user()->role) === 'admin') {
-            // Admin melihat semua pesanan (jangan lupa muat relasi pemasok)
+        if (auth()->user() && in_array(strtolower(auth()->user()->role), ['admin', 'owner'])) {
+            // Admin/Owner melihat semua pesanan (jangan lupa muat relasi pemasok)
             $pemesanans = PemesananStok::with(['user', 'pemasok'])->latest()->get();
         } else {
             // User melihat pesanan miliknya sendiri
@@ -23,11 +23,6 @@ class PemesananStokController extends Controller
 
     public function create()
     {
-        // Hanya User biasa yang boleh membuat pengajuan pemesanan baru
-        if (auth()->user() && strtolower(auth()->user()->role) === 'admin') {
-            return redirect()->route('pemesanan.index')->with('error', 'Admin tidak diperkenankan membuat pengajuan pemesanan.');
-        }
-
         // Ambil data pemasok untuk ditampilkan di dropdown form
         $pemasoks = Pemasok::orderBy('nama_pemasok', 'asc')->get();
         
@@ -36,10 +31,6 @@ class PemesananStokController extends Controller
 
     public function store(Request $request)
     {
-        if (auth()->user() && strtolower(auth()->user()->role) === 'admin') {
-            return redirect()->route('pemesanan.index')->with('error', 'Admin tidak diperkenankan membuat pengajuan pemesanan.');
-        }
-
         $request->validate([
             'nama_obat'  => 'required|string|max:255',
             'merek'      => 'nullable|string|max:255',
@@ -64,7 +55,7 @@ class PemesananStokController extends Controller
     // Fungsi baru pengganti approve: updateStatus
     public function updateStatus(Request $request, $id)
     {
-        if (auth()->user() && strtolower(auth()->user()->role) !== 'admin') {
+        if (auth()->user() && !in_array(strtolower(auth()->user()->role), ['admin', 'owner'])) {
             abort(403, 'Unauthorized action.');
         }
 
