@@ -21,8 +21,8 @@ class DashboardController extends Controller
         $totalJenisObat = Obat::whereNotNull('jenis_obat')->where('jenis_obat', '!=', '')->select('jenis_obat')->groupBy('jenis_obat')->get()->count();
         $totalPengguna = User::count();
 
-        $totalObatMasuk = DetailTransaksi::whereRaw('jumlah_masuk > 0')->sum('jumlah_masuk') ?? 0;
-        $totalObatKeluar = abs(DetailTransaksi::whereRaw('jumlah_masuk < 0')->sum('jumlah_masuk') ?? 0);
+        $totalObatMasuk = DetailTransaksi::withTrashed()->whereRaw('jumlah_masuk > 0')->sum('jumlah_masuk') ?? 0;
+        $totalObatKeluar = abs(DetailTransaksi::withTrashed()->whereRaw('jumlah_masuk < 0')->sum('jumlah_masuk') ?? 0);
 
         $today = now()->toDateString();
         $thirtyDaysFromNow = now()->addDays(30)->toDateString();
@@ -51,9 +51,9 @@ class DashboardController extends Controller
         $hariIni = Carbon::today();
         $awalBulan = Carbon::now()->startOfMonth();
 
-        // A. Finansial Hari Ini (Cari transaksi keluar hari ini)
-        $detailHariIni = DetailTransaksi::whereHas('transaksi', function ($q) use ($hariIni) {
-            $q->whereDate('tanggal_transaksi', $hariIni)->whereNull('pemasok_id');
+        // A. Finansial Hari Ini (Tetap menghitung omset walau riwayat dibersihkan dari tabel)
+        $detailHariIni = DetailTransaksi::withTrashed()->whereHas('transaksi', function ($q) use ($hariIni) {
+            $q->withTrashed()->whereDate('tanggal_transaksi', $hariIni)->whereNull('pemasok_id');
         })->get();
 
         $pendapatanHariIni = $detailHariIni->sum('subtotal');
@@ -62,9 +62,9 @@ class DashboardController extends Controller
         });
         $labaHariIni = $pendapatanHariIni - $modalHariIni;
 
-        // B. Finansial Bulan Ini (Cari transaksi keluar dari tgl 1 sampai hari ini)
-        $detailBulanIni = DetailTransaksi::whereHas('transaksi', function ($q) use ($awalBulan) {
-            $q->where('tanggal_transaksi', '>=', $awalBulan)->whereNull('pemasok_id');
+        // B. Finansial Bulan Ini (Tetap menghitung omset walau riwayat dibersihkan dari tabel)
+        $detailBulanIni = DetailTransaksi::withTrashed()->whereHas('transaksi', function ($q) use ($awalBulan) {
+            $q->withTrashed()->where('tanggal_transaksi', '>=', $awalBulan)->whereNull('pemasok_id');
         })->get();
 
         $pendapatanBulanIni = $detailBulanIni->sum('subtotal');
