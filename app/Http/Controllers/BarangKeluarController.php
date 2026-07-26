@@ -121,7 +121,7 @@ class BarangKeluarController extends Controller
         // 4. UPDATE TOTAL HARGA TRANSAKSI
         $transaksi->update(['total_harga' => $totalHargaTransaksi]);
 
-        return redirect()->route('barang-keluar.index')->with('success', 'Barang keluar berhasil diproses dengan sistem FEFO');
+        return redirect()->route('barang-keluar.index')->with('success', 'Barang keluar berhasil diproses oleh sistem');
     }
 
     public function destroy($id)
