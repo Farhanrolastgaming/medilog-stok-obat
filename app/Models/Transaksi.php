@@ -4,27 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes; // Tambahkan ini
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaksi extends Model
 {
-    use HasFactory, SoftDeletes; // Tambahkan ini
+    use HasFactory, SoftDeletes;
+
     protected $fillable = ['user_id', 'pemasok_id', 'tanggal_transaksi', 'total_harga'];
-
-
-    public function Pemasok()
-    {
-        return $this->belongsTo(Pemasok::class, 'pemasok_id');
-    }
 
     public function pemasok()
     {
         return $this->belongsTo(Pemasok::class, 'pemasok_id');
-    }
-
-    public function User()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function user()
@@ -57,15 +47,12 @@ class Transaksi extends Model
                      ->where('id', '<=', $this->id);
 
         if (is_null($this->pemasok_id)) {
-            $query->whereNull('pemasok_id'); // Khusus Barang Keluar
+            $query->whereNull('pemasok_id');
         } else {
-            $query->whereNotNull('pemasok_id'); // Khusus Barang Masuk
+            $query->whereNotNull('pemasok_id');
         }
 
         $urutan = $query->count();
         return $prefix . str_pad($urutan, 3, '0', STR_PAD_LEFT);
     }
-
-
-
 }
