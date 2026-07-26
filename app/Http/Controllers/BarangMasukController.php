@@ -106,37 +106,10 @@ class BarangMasukController extends Controller
 
     public function destroy($id)
     {
-        $transaksi = Transaksi::with('DetailTransaksi')->findOrFail($id);
-
-        foreach ($transaksi->DetailTransaksi as $detail) {
-            // 1. Kurangi Total Stok di Obat Master
-            $obat = Obat::find($detail->obat_id);
-            if ($obat) {
-                $obat->stok = max(0, ($obat->stok ?? 0) - $detail->jumlah_masuk);
-                $obat->save();
-            }
-
-            // 2. LOGIKA BARU: Kurangi juga stok di Batch terkait
-            if ($detail->masa_kadaluwarsa) {
-                $batch = StokBatch::where('obat_id', $detail->obat_id)
-                                  ->where('pemasok_id', $transaksi->pemasok_id)
-                                  ->where('expired_date', $detail->masa_kadaluwarsa)
-                                  ->first();
-                
-                if ($batch) {
-                    $batch->stok = max(0, $batch->stok - $detail->jumlah_masuk);
-                    $batch->save();
-                    
-                    // Opsional: Hapus baris batch sepenuhnya jika stoknya jadi 0
-                    if ($batch->stok == 0) {
-                        $batch->delete();
-                    }
-                }
-            }
-        }
-
+        $transaksi = Transaksi::findOrFail($id);
         $transaksi->delete();
-        return redirect()->route('barang-masuk.index')->with('success', 'Barang masuk berhasil dihapus');
+
+        return redirect()->route('barang-masuk.index')->with('success', 'Riwayat transaksi barang masuk berhasil dihapus.');
     }
     public function cetak($id)
     {

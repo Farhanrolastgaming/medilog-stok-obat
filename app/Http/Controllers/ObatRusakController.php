@@ -73,32 +73,10 @@ class ObatRusakController extends Controller
 
     public function destroy(string $id)
     {
-        DB::transaction(function () use ($id) {
-            $item = ObatRusak::findOrFail($id);
+        $item = ObatRusak::findOrFail($id);
+        $item->delete();
 
-            // Kembalikan stok jika catatan dibatalkan/dihapus
-            if ($item->stok_batch_id) {
-                $batch = StokBatch::find($item->stok_batch_id);
-                if ($batch) {
-                    $batch->stok += $item->jumlah;
-                    $batch->save();
-                }
-            }
-
-            $obat = Obat::find($item->obat_id);
-            if ($obat) {
-                if ($obat->stokBatches()->count() > 0) {
-                    $obat->stok = $obat->stokBatches()->sum('stok');
-                } else {
-                    $obat->stok += $item->jumlah;
-                }
-                $obat->save();
-            }
-
-            $item->delete();
-        });
-
-        return redirect()->route('obat-rusak.index')->with('success', 'Catatan obat rusak berhasil dihapus dan stok dikembalikan.');
+        return redirect()->route('obat-rusak.index')->with('success', 'Catatan obat rusak/retur berhasil dihapus.');
     }
 
     public function cetak(string $id)

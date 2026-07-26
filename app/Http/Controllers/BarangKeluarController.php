@@ -126,30 +126,10 @@ class BarangKeluarController extends Controller
 
     public function destroy($id)
     {
-        $transaksi = Transaksi::with('DetailTransaksi')->findOrFail($id);
-
-        foreach ($transaksi->DetailTransaksi as $detail) {
-            // 1. Kembalikan stok ke Master Obat
-            $obat = Obat::find($detail->obat_id);
-            if ($obat) {
-                $obat->stok += abs($detail->jumlah_masuk);
-                $obat->save();
-            }
-
-            // 2. Kembalikan stok ke Batch yang tepat (berdasarkan expired_date)
-            $batch = StokBatch::where('obat_id', $detail->obat_id)
-                ->where('merek', $detail->merek)
-                ->where('expired_date', $detail->masa_kadaluwarsa)
-                ->first();
-            
-            if ($batch) {
-                $batch->stok += abs($detail->jumlah_masuk);
-                $batch->save();
-            }
-        }
-
+        $transaksi = Transaksi::findOrFail($id);
         $transaksi->delete();
-        return redirect()->route('barang-keluar.index')->with('success', 'Transaksi dibatalkan, stok berhasil dikembalikan.');
+
+        return redirect()->route('barang-keluar.index')->with('success', 'Riwayat transaksi barang keluar berhasil dihapus.');
     }
 
     public function cetak($id)
