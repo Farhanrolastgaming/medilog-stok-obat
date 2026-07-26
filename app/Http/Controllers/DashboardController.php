@@ -17,8 +17,8 @@ class DashboardController extends Controller
         // 1. DATA STATISTIK UMUM (Kode Aslimu)
         // ==========================================
         $totalObat = Obat::count();
-        $totalMerek = StokBatch::whereNotNull('merek')->where('merek', '!=', '')->distinct('merek')->count('merek');
-        $totalJenisObat = Obat::distinct('jenis_obat')->count('jenis_obat');
+        $totalMerek = StokBatch::whereNotNull('merek')->where('merek', '!=', '')->select('merek')->groupBy('merek')->get()->count();
+        $totalJenisObat = Obat::whereNotNull('jenis_obat')->where('jenis_obat', '!=', '')->select('jenis_obat')->groupBy('jenis_obat')->get()->count();
         $totalPengguna = User::count();
 
         $totalObatMasuk = DetailTransaksi::whereRaw('jumlah_masuk > 0')->sum('jumlah_masuk') ?? 0;
