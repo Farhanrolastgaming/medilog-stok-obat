@@ -66,7 +66,7 @@
                     <tr>
                         <td colspan="6" class="py-8 px-4 text-center text-gray-500">
                             <i class="fas fa-inbox text-3xl mb-2"></i>
-                            <p>Data barang masuk tidak ada</p>
+                            <p class="text-lg font-medium">Data barang masuk tidak ada</p>
                         </td>
                     </tr>
                     @endforelse

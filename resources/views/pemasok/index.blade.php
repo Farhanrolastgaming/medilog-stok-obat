@@ -146,7 +146,6 @@
                         <td colspan="{{ auth()->user() && in_array(strtolower(auth()->user()->role), ['admin', 'owner']) ? '6' : '5' }}" class="py-12 px-4 text-center text-gray-500">
                             <i class="fas fa-boxes text-4xl mb-3 text-gray-300"></i>
                             <p class="text-lg font-medium">Belum ada data pemasok</p>
-                            <p class="text-sm mt-1">Data master rekanan PBF/Pemasok akan muncul di sini.</p>
                         </td>
                     </tr>
                     @endforelse
