@@ -92,6 +92,8 @@ class ReportController extends Controller
 
     public function laporanBarangMasuk(Request $request)
     {
+        $sortOrder = strtolower($request->get('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
+
         $query = Transaksi::withTrashed()
             ->with(['Pemasok', 'DetailTransaksi' => function($q) {
                 $q->withTrashed();
@@ -105,7 +107,7 @@ class ReportController extends Controller
             $query->whereDate('tanggal_transaksi', '<=', $request->tanggal_sampai);
         }
 
-        $transaksis = $query->latest('tanggal_transaksi')->get();
+        $transaksis = $query->orderBy('tanggal_transaksi', $sortOrder)->orderBy('id', $sortOrder)->get();
 
         if ($request->has('cetak')) {
             return view('report.cetak-barang-masuk', compact('transaksis'));
@@ -145,6 +147,8 @@ class ReportController extends Controller
 
     public function laporanBarangKeluar(Request $request)
     {
+        $sortOrder = strtolower($request->get('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
+
         $query = Transaksi::withTrashed()
             ->with(['DetailTransaksi' => function($q) {
                 $q->withTrashed();
@@ -158,7 +162,7 @@ class ReportController extends Controller
             $query->whereDate('tanggal_transaksi', '<=', $request->tanggal_sampai);
         }
 
-        $transaksis = $query->latest('tanggal_transaksi')->get();
+        $transaksis = $query->orderBy('tanggal_transaksi', $sortOrder)->orderBy('id', $sortOrder)->get();
 
         if ($request->has('cetak')) {
             return view('report.cetak-barang-keluar', compact('transaksis'));

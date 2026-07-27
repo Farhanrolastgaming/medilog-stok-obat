@@ -16,6 +16,13 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Sampai</label>
             <input type="date" name="tanggal_sampai" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon" value="{{ request('tanggal_sampai') }}">
         </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Urutan Tanggal</label>
+            <select name="sort_order" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon text-sm bg-white">
+                <option value="desc" {{ request('sort_order', 'desc') == 'desc' ? 'selected' : '' }}>Terbaru (DESC)</option>
+                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Terlama (ASC)</option>
+            </select>
+        </div>
         <div class="flex flex-wrap gap-2 ml-auto">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors font-medium">
                 <i class="fas fa-search"></i> Filter
