@@ -24,6 +24,7 @@
         <div class="text-right">
             <h2 class="text-xl font-bold text-gray-800 uppercase">Nomor Transaksi</h2>
             <p class="text-sm text-gray-600">{{ $transaksi->kode_transaksi }}</p>
+            <p class="text-xs text-gray-500 mt-0.5"><span class="font-bold">Tanggal Cetak:</span> {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }} WIB</p>
         </div>
     </div>
 
