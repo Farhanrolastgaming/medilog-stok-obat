@@ -29,7 +29,7 @@
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden relative z-10">
     <div class="px-5 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
         <div class="flex items-center gap-2 text-gray-700">
-            <span class="text-sm font-medium">Daftar PBF / Pemasok Obat</span>
+            <span class="text-sm font-medium">Daftar Pemasok Obat</span>
         </div>
         <span class="text-xs text-gray-500 font-medium">Total: {{ $pemasoks->count() }} Pemasok</span>
     </div>

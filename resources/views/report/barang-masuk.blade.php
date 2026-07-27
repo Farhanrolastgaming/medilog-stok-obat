@@ -19,8 +19,8 @@
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Urutan Tanggal</label>
             <select name="sort_order" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon text-sm bg-white">
-                <option value="desc" {{ request('sort_order', 'desc') == 'desc' ? 'selected' : '' }}>Terbaru (DESC)</option>
-                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Terlama (ASC)</option>
+                <option value="desc" {{ request('sort_order', 'desc') == 'desc' ? 'selected' : '' }}>Terbaru</option>
+                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Terlama</option>
             </select>
         </div>
         <div class="flex flex-wrap gap-2 ml-auto">
