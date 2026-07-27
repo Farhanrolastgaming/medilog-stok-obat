@@ -9,26 +9,28 @@
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 no-print">
     <form method="GET" action="{{ route('report.barang-keluar') }}" class="flex flex-wrap items-end gap-4">
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Dari</label>
-            <input type="date" name="tanggal_dari" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon" value="{{ request('tanggal_dari') }}">
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Dari</label>
+            <input type="date" name="tanggal_dari" class="px-4 h-[42px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon text-sm bg-white" value="{{ request('tanggal_dari') }}">
         </div>
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Sampai</label>
-            <input type="date" name="tanggal_sampai" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon" value="{{ request('tanggal_sampai') }}">
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Sampai</label>
+            <input type="date" name="tanggal_sampai" class="px-4 h-[42px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon text-sm bg-white" value="{{ request('tanggal_sampai') }}">
         </div>
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Urutan Tanggal</label>
-            <select name="sort_order" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon text-sm bg-white">
-                <option value="desc" {{ request('sort_order', 'desc') == 'desc' ? 'selected' : '' }}>Terbaru</option>
-                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Terlama</option>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Urutan Data</label>
+            <select name="sort_order" class="px-4 h-[42px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon text-sm bg-white cursor-pointer">
+                <option value="tanggal_desc" {{ request('sort_order', 'tanggal_desc') == 'tanggal_desc' ? 'selected' : '' }}>Tanggal Terbaru</option>
+                <option value="tanggal_asc" {{ request('sort_order') == 'tanggal_asc' ? 'selected' : '' }}>Tanggal Terlama</option>
+                <option value="total_desc" {{ request('sort_order') == 'total_desc' ? 'selected' : '' }}>Nilai Penjualan Tertinggi</option>
+                <option value="total_asc" {{ request('sort_order') == 'total_asc' ? 'selected' : '' }}>Nilai Penjualan Terendah</option>
             </select>
         </div>
         <div class="flex flex-wrap items-center gap-2 ml-auto">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium transition-colors">
+            <button type="submit" class="bg-blue-600 text-white px-4 h-[42px] rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium transition-colors cursor-pointer">
                 <i class="fas fa-search"></i> Filter
             </button>
             <div class="relative inline-block text-left group">
-                <button type="button" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 flex items-center gap-2 transition-colors cursor-pointer">
+                <button type="button" class="bg-green-600 text-white px-4 h-[42px] rounded-lg font-medium hover:bg-green-700 flex items-center gap-2 transition-colors cursor-pointer">
                     <i class="fas fa-print"></i> Cetak Laporan <i class="fas fa-chevron-down text-xs ml-1"></i>
                 </button>
                 <div class="absolute right-0 mt-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 hidden group-hover:block hover:block z-50 py-1">

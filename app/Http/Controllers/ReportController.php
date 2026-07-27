@@ -11,19 +11,18 @@ class ReportController extends Controller
 {
     public function laporanStok(Request $request)
     {
-        // Ambil parameter sort, beri nilai default jika tidak ada
-        $sortBy = $request->get('sort_by', 'tanggal');
-        $sortOrder = $request->get('sort_order', 'desc');
+        $sortOrder = $request->get('sort_order', 'tanggal_desc');
 
-        // Gunakan join agar bisa mengakses kolom milik tabel transaksis
+        // Gunakan join agar bisa mengakses kolom milik tabel transaksis dan obats
         $query = DetailTransaksi::withTrashed()
             ->join('transaksis', 'detail_transaksis.transaksi_id', '=', 'transaksis.id')
-            ->select('detail_transaksis.*') // PRO-TIP: Wajib agar ID detail tidak tertimpa ID transaksi utama
+            ->leftJoin('obats', 'detail_transaksis.obat_id', '=', 'obats.id')
+            ->select('detail_transaksis.*') // Wajib agar ID detail tidak tertimpa
             ->with(['transaksi' => function($q) {
                 $q->withTrashed();
             }, 'transaksi.Pemasok', 'obat']);
 
-        // Filter tanggal (tetap mempertahankan logika lamamu)
+        // Filter tanggal
         if ($request->tanggal_dari || $request->tanggal_sampai) {
             $query->whereHas('transaksi', function($q) use ($request) {
                 $q->withTrashed();
@@ -37,12 +36,14 @@ class ReportController extends Controller
         }
 
         // LOGIKA PENGURUTAN DATA
-        if ($sortBy === 'kode_transaksi') {
-            // Ganti 'kode_transaksi' di bawah sesuai nama kolom kode/no transaksimu (misal: no_transaksi)
-            $query->orderBy('transaksis.kode_transaksi', $sortOrder);
+        if ($sortOrder === 'tanggal_asc' || $sortOrder === 'asc') {
+            $query->orderBy('transaksis.tanggal_transaksi', 'asc')->orderBy('detail_transaksis.id', 'asc');
+        } elseif ($sortOrder === 'nama_asc') {
+            $query->orderBy('obats.nama_obat', 'asc');
+        } elseif ($sortOrder === 'nama_desc') {
+            $query->orderBy('obats.nama_obat', 'desc');
         } else {
-            // Default: Urut berdasarkan tanggal transaksi
-            $query->orderBy('transaksis.tanggal_transaksi', $sortOrder);
+            $query->orderBy('transaksis.tanggal_transaksi', 'desc')->orderBy('detail_transaksis.id', 'desc');
         }
 
         $mutasiStok = $query->get();
@@ -92,9 +93,11 @@ class ReportController extends Controller
 
     public function laporanBarangMasuk(Request $request)
     {
-        $sortOrder = strtolower($request->get('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $sortOrder = $request->get('sort_order', 'tanggal_desc');
 
         $query = Transaksi::withTrashed()
+            ->leftJoin('pemasoks', 'transaksis.pemasok_id', '=', 'pemasoks.id')
+            ->select('transaksis.*')
             ->with(['Pemasok', 'DetailTransaksi' => function($q) {
                 $q->withTrashed();
             }, 'DetailTransaksi.obat'])
@@ -107,7 +110,17 @@ class ReportController extends Controller
             $query->whereDate('tanggal_transaksi', '<=', $request->tanggal_sampai);
         }
 
-        $transaksis = $query->orderBy('tanggal_transaksi', $sortOrder)->orderBy('id', $sortOrder)->get();
+        if ($sortOrder === 'tanggal_asc' || $sortOrder === 'asc') {
+            $query->orderBy('transaksis.tanggal_transaksi', 'asc')->orderBy('transaksis.id', 'asc');
+        } elseif ($sortOrder === 'pemasok_asc' || $sortOrder === 'nama_asc') {
+            $query->orderBy('pemasoks.nama_pemasok', 'asc');
+        } elseif ($sortOrder === 'pemasok_desc' || $sortOrder === 'nama_desc') {
+            $query->orderBy('pemasoks.nama_pemasok', 'desc');
+        } else {
+            $query->orderBy('transaksis.tanggal_transaksi', 'desc')->orderBy('transaksis.id', 'desc');
+        }
+
+        $transaksis = $query->get();
 
         if ($request->has('cetak')) {
             return view('report.cetak-barang-masuk', compact('transaksis'));
@@ -147,7 +160,7 @@ class ReportController extends Controller
 
     public function laporanBarangKeluar(Request $request)
     {
-        $sortOrder = strtolower($request->get('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $sortOrder = $request->get('sort_order', 'tanggal_desc');
 
         $query = Transaksi::withTrashed()
             ->with(['DetailTransaksi' => function($q) {
@@ -162,7 +175,17 @@ class ReportController extends Controller
             $query->whereDate('tanggal_transaksi', '<=', $request->tanggal_sampai);
         }
 
-        $transaksis = $query->orderBy('tanggal_transaksi', $sortOrder)->orderBy('id', $sortOrder)->get();
+        if ($sortOrder === 'tanggal_asc' || $sortOrder === 'asc') {
+            $query->orderBy('tanggal_transaksi', 'asc')->orderBy('id', 'asc');
+        } elseif ($sortOrder === 'total_desc') {
+            $query->orderBy('total_harga', 'desc');
+        } elseif ($sortOrder === 'total_asc') {
+            $query->orderBy('total_harga', 'asc');
+        } else {
+            $query->orderBy('tanggal_transaksi', 'desc')->orderBy('id', 'desc');
+        }
+
+        $transaksis = $query->get();
 
         if ($request->has('cetak')) {
             return view('report.cetak-barang-keluar', compact('transaksis'));
