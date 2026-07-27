@@ -23,16 +23,23 @@
                 <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Terlama</option>
             </select>
         </div>
-        <div class="flex flex-wrap gap-2 ml-auto">
+        <div class="flex flex-wrap items-center gap-2 ml-auto">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors font-medium">
                 <i class="fas fa-search"></i> Filter
             </button>
-            <button type="submit" name="export_excel" value="1" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 flex items-center gap-2 transition-colors">
-                <i class="fas fa-file-excel"></i> Export Excel
-            </button>
-            <button type="submit" name="cetak" value="1" formtarget="_blank" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 flex items-center gap-2 transition-colors">
-                <i class="fas fa-print"></i> Cetak Laporan
-            </button>
+            <div class="relative inline-block text-left group">
+                <button type="button" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 flex items-center gap-2 transition-colors cursor-pointer">
+                    <i class="fas fa-print"></i> Cetak Laporan <i class="fas fa-chevron-down text-xs ml-1"></i>
+                </button>
+                <div class="absolute right-0 mt-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 hidden group-hover:block hover:block z-50 py-1">
+                    <button type="submit" name="cetak" value="1" formtarget="_blank" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition font-medium cursor-pointer">
+                        <i class="fas fa-file-pdf text-red-500 text-base"></i> Cetak PDF
+                    </button>
+                    <button type="submit" name="export_excel" value="1" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition font-medium cursor-pointer">
+                        <i class="fas fa-file-excel text-emerald-600 text-base"></i> Export Excel
+                    </button>
+                </div>
+            </div>
         </div>
     </form>
 </div>
