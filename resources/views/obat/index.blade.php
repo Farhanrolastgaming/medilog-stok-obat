@@ -25,14 +25,6 @@
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau kode obat..." class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon">
         </div>
         <div class="w-full sm:w-auto">
-            <select name="jenis_obat" class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon">
-                <option value="">-- Semua Jenis Obat --</option>
-                @foreach($jenisList as $jenis)
-                <option value="{{ $jenis }}" {{ request('jenis_obat') == $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="w-full sm:w-auto">
             <select name="golongan_obat" class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandMaroon">
                 <option value="">-- Semua Golongan --</option>
                 @foreach($golonganList as $gol)
@@ -44,7 +36,7 @@
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
                 <i class="fas fa-search"></i> Cari
             </button>
-            @if(request('search') || request('jenis_obat') || request('golongan_obat'))
+            @if(request('search') || request('golongan_obat'))
             <a href="{{ route('obat.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                 Reset
             </a>
